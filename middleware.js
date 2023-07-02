@@ -1,20 +1,44 @@
 const express=require("express");
 const Campground = require("./models/campgrounds");
 const Review = require("./models/review");
-const Joi = require("joi");
+const baseJoi = require("joi");
+const sanitizeHtml = require('sanitize-html');
 
 
+
+const extension = (Joi) => ({
+  type: "string",
+  base: Joi.string(),
+  messages: {
+    "string.escapeHTML": "{{#label}} must not include HTML!",
+  },
+  rules: {
+    escapeHTML: {
+      validate(value, helpers) {
+        const clean = sanitizeHtml(value, {
+            allowedTags: [],
+            allowedAttributes: {},
+        });
+        if(clean !== value) return helpers.error('string.escapeHTML',{value})
+        return clean;
+      },
+    },
+  },
+});
+
+
+const Joi=baseJoi.extend(extension);
 
 
 //Joi Validation for forms
 module.exports.validateCampground = (req, res, next) => {
     const campgroundSchema = Joi.object({
       campground: Joi.object({
-        title: Joi.string().required(),
+        title: Joi.string().required().escapeHTML(),
         price: Joi.number().required().min(0),
         // images: Joi.string().required(),
-        location: Joi.string().required(),
-        description: Joi.string().required(),
+        location: Joi.string().required().escapeHTML(),
+        description: Joi.string().required().escapeHTML(),
       }).required(),
       deleteImages: Joi.array()
     });
@@ -32,7 +56,7 @@ module.exports.validateCampground = (req, res, next) => {
   module.exports.validateReview=(req,res,next)=>{
     const reviewSchema =Joi.object({
         review : Joi.object({
-        body :Joi.string().required(),
+        body :Joi.string().required().escapeHTML(),
         rating :Joi.number().required().min(1)
       }).required(),
     });
