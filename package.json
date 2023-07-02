@@ -34,5 +34,14 @@
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^8.0.0",
     "sanitize-html": "^2.11.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SagnikAcharya/YelpCamp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SagnikAcharya/YelpCamp/issues"
+  },
+  "homepage": "https://github.com/SagnikAcharya/YelpCamp#readme",
+  "keywords": []
 }
